@@ -9,6 +9,9 @@ Group project for Data Mining module.
 
 ## About
 
+Dataset:
+https://www.kaggle.com/datasets/jessemostipak/hotel-booking-demand
+
 Team:
 - Daniel Rimaru
   - Student ID: 19134702
