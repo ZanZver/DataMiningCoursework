@@ -10,6 +10,7 @@ Group project for Data Mining module.
   - [Structure](#structure)
 
 ## About
+In this project, our team is going to use data mining concepts to explore hotel data. At the moment we are not sure what we are going to get from the data. This is going to be updated!
 
 ### Dataset
 
@@ -70,7 +71,7 @@ After you have downloaded the file (filename: hotel_bookings.csv), paste it in t
    - Responsible for: 123
 
 ## Structure
-
+GitHub structure can be found bellow. This will be updated as the project develops.
 ```
 DataMiningCoursework
 │   README.md
