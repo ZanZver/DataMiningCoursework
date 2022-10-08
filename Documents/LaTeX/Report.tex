@@ -1,0 +1,111 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage[utf8]{inputenc}
+
+% Mihai's special package 
+\usepackage{fancyhdr}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage[center]{caption}
+\usepackage[normalem]{ulem}
+\usepackage{longtable}
+\usepackage{comment}
+\usepackage{array}
+\usepackage{soul}
+\usepackage{fancyhdr}
+\usepackage{adjustbox}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{zed-csp}
+\usepackage{geometry}
+\usepackage{hyperref}
+%referencing >>>>>>>>
+\usepackage{amsmath}
+\usepackage{csquotes}% Recommended
+\usepackage[english]{babel}
+\usepackage[style=authoryear-ibid,backend=biber]{biblatex}
+\addbibresource{bibliography.bib}% Syntax for version >= 1.2
+%for minted>>>>>
+%\usepackage{minted} % This errors out?
+%\usemintedstyle{colorful}
+
+\PassOptionsToPackage{hyphens}{url}\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,     
+    urlcolor=blue,
+}
+\urlstyle{same}
+
+\title{Report title}
+\author{Zan Zver}
+\date{Report Date }
+\graphicspath{ {images/} }
+
+\newcommand{\latex}{\LaTeX\ }
+\newcommand{\authorName}{Zan Zver}
+\newcommand{\authorID}{18133498}
+\newcommand{\reportTitle}{Report Title}
+\newcommand{\degreeAward}{BSc (Hons) in Computer and Data Science } 
+
+\begin{document}
+
+\DeclareGraphicsExtensions{.jpg,.png,.gif,.pdf,.jpeg}
+%
+\begin{titlepage}
+    \begin{center}
+        CMPXXXX – CourseName
+        \vspace*{0.5cm}
+ 
+        \huge\textbf{\reportTitle} 
+ 
+        \vspace{0.5cm}
+         Coursework Assignment Report
+             
+        \vspace{1.5cm}
+ 
+        \authorName \\
+        \authorID
+ 
+ 
+        \vfill
+             
+        \vspace{0.8cm}
+      
+        \begin{figure}[htp]
+         \centering
+         \includegraphics[width=0.5\textwidth]{logo}
+        \end{figure}
+             
+        \large{Faculty of Computing, Engineering and the Built Environment \\
+        Birmingham City University \\}
+             
+    \end{center}
+\end{titlepage}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\includegraphics[width = 3.3cm]{header.jpg}}
+\lhead{\footnotesize BIRMINGHAM CITY UNIVERSITY \\ SCHOOL OF COMPUTING AND DIGITAL TECHNOLOGY}
+\rfoot{Page \thepage}
+\newgeometry{top=110pt}
+\setlength{\headsep}{50pt}
+
+\tableofcontents
+
+\listoftables
+
+\listoffigures
+
+\newpage
+
+\begin{abstract}
+    Summary of the entire report
+\end{abstract}
+
+\include{Sections/Section1/section1}
+
+\end{document}
