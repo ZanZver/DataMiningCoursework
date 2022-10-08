@@ -103,6 +103,7 @@ DataMiningCoursework
 │        └─── images
 │        │    │   header.jpg
 │        │    │   └───   BCU img that is used in the header of the report
+│        │    │
 │        │    │   logo.png
 │        │    │   └───   Logo of BCU that is displayed at the begining of the report
 │        │
