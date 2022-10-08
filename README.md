@@ -79,15 +79,58 @@ DataMiningCoursework
 └─── Code
 │   │   code.R
 │   │
-│   └───subfolder1
+│   └─── subfolder1
 │       │   otherCode.R
 │       │   ...
 │   
 └─── Data
-│   │   originalData.csv
-│   │   channgedData.csv
+│    │   hotel_bookings_lite..csv
+│    │   └───   Lite version of the dataset (only 10k rows)
+│    │   liteData.R
+│    │   └───   Code that generated lite dataset
 │    
 └─── Documents
-    │   doc1.txt
-    │   doc2.txt
+│    └─── LaTeX
+│        │    bibliography.bib
+│        │    └───   Authors (for references) are added here
+│        │ 
+│        │    Report.tex
+│        │    └───   Report in .tex file (.tex generates other items as well but they are not important)
+│        │
+│        │    Report.pdf
+│        │    └───   Report as .pdf file
+│        │
+│        └─── images
+│        │    │   header.jpg
+│        │    │   └───   BCU img that is used in the header of the report
+│        │    │   logo.png
+│        │    │   └───   Logo of BCU that is displayed at the begining of the report
+│        │
+│        └─── Sections
+│                └─── Domain_Description
+│                │   │   domain_description.tex
+│                │
+│                └─── Problem_Definition
+│                │   │   problem_definition.tex
+│                │
+│                └─── Literature_Review
+│                │   │   literature_review.tex
+│                │
+│                └─── Dataset_Description
+│                │   │   dataset_description.tex
+│                │
+│                └─── Dataset_Pre-processing
+│                │   │   dataset_pre-processing.tex
+│                │
+│                └─── Experiments
+│                │   │   experiments.tex
+│                │
+│                └─── Analysis_Results_Conclusions
+│                │   │   analysis_results_conclusions.tex
+│                │
+│                └─── References
+│                │   │   references.tex
+│                │
+│                └─── Section1
+│                    │   section1.tex
 ```
