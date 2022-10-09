@@ -1,16 +1,21 @@
-# DataMiningCoursework
+# Data Mining Coursework
 Group project for Data Mining module.
 
 ## Table of Contents
-- [DataMiningCoursework](#dataminingcoursework)
+- [Data Mining Coursework](#data-mining-coursework)
   - [Table of Contents](#table-of-contents)
   - [About](#about)
+    - [Requirements](#requirements)
     - [Dataset](#dataset)
     - [Team](#team)
   - [Structure](#structure)
 
 ## About
 In this project, our team is going to use data mining concepts to explore hotel data. At the moment we are not sure what we are going to get from the data. This is going to be updated!
+
+### Requirements
+To replicate the project, you need R. We do recommend R studio as IDE.
+R: Version 4.2.1
 
 ### Dataset
 
@@ -84,7 +89,7 @@ DataMiningCoursework
 │       │   ...
 │   
 └─── Data
-│    │   hotel_bookings_lite..csv
+│    │   hotel_bookings_lite.csv
 │    │   └───   Lite version of the dataset (only 10k rows)
 │    │   liteData.R
 │    │   └───   Code that generated lite dataset
