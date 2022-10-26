@@ -114,9 +114,17 @@ for (i in 1:length(hotelColNames)){
   print(hotelColNames[i]) # Print col name
   tempTable <- table(hotel_bookings%>%dplyr::pull(i)) # Get num of occurrences
   print(tempTable) # Print num of occurrences
+  
+  # To save the files, works for Zan atm
+  # tempBarFile <- paste(hotelColNames[i], ".pdf", sep = "")
+  # tempTotalPath <- paste(dataFolderZan, "Graphs/", sep = "")
+  # tempFinalPath <- paste(tempTotalPath, tempBarFile, sep = "")
+  # pdf(tempFinalPath) 
+  
   barplot(tempTable, main = hotelColNames[i], xlab = "Attributes", ylab = "Num. of occurrences") # Visualize num of occurrences
+  # dev.off()
+  
   print("=============================================================")
-
 }
 
 
