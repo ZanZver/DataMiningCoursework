@@ -9,12 +9,32 @@
 # Available on GitHub https://github.com/ZanZver/DataMiningCoursework
 #==============================================================================================================
 
+# Our dataset paths
+# Daniels data path
+dataFolderDaniel <- "~/Daniel/Sleep/" # DANIEL change that to whatever your path is
+# Mihais data path
+dataFolderMihai <- "~/Uni/CMP726_Data_Mining/DataMiningCoursework/"
+# Zans data path
+dataFolderZan <- "~/Documents/BCU2/Masters/CMP7206-A-S1-2022:3_Data_Mining/Coursework/DataMiningCoursework/"
+
+if(dir.exists(dataFolderDaniel)){
+  print("Welcome Deniel")
+  usersDataFolder <- dataFolderDaniel
+}else if(dir.exists(dataFolderMihai)){
+  print("Welcome Mihai")
+  usersDataFolder <- dataFolderMihai
+}else if(dir.exists(dataFolderZan)){
+  print("Welcome Zan")
+  usersDataFolder <- dataFolderZan
+}else{
+  stop("No path has been found")
+}
 
 
 #==============================================================================================================
 # Library downloads 
 #==============================================================================================================
-install.packages("dplyr")
+#install.packages("dplyr")
 
 
 #==============================================================================================================
@@ -22,18 +42,10 @@ install.packages("dplyr")
 #==============================================================================================================
 library(dplyr)
 
-
+source(paste(usersDataFolder, "Code/function.R", sep = ""))
 #==============================================================================================================
 # Data import
 #==============================================================================================================
-
-# Our dataset paths
-# Daniels data path
-dataFolderDaniel <- "~/Documents/BCU2/Masters/" # DANIEL change that to whatever your path is
-# Mihais data path
-dataFolderMihai <- "~/Uni/CMP726_Data_Mining/DataMiningCoursework/Data/"
-# Zans data path
-dataFolderZan <- "~/Documents/BCU2/Masters/CMP7206-A-S1-2022:3_Data_Mining/Coursework/DataMiningCoursework/Data/"
 
 # Decide which file to use, lite dataset is used by default
 if(TRUE){
@@ -44,62 +56,15 @@ if(TRUE){
   fileName <- "hotel_bookings.csv"
 }
 
-# Function to load all of the data
-dataLoader <- function(dataFolder, fileName, user) {
-  tryCatch(               
-    expr = {
-      # Join persons data path with lite data path
-      dataLite <- paste(dataFolder, fileName, sep = "")
-      # Read CSV from dataLite path
-      hotel_bookings <- read.csv(dataLite, stringsAsFactors=TRUE)
-      # Return CSV
-      return(hotel_bookings)
-    },
-    error = function(e){
-      # Inform the user on whose profile the error occurred
-      print(sprintf("Error for user: %s", user))
-      # Print out the error
-      print(e)
-      # Return nothing
-      return(NULL)
-    },
-    warning = function(w){
-      # Inform the user on whose profile the warning occurred
-      print(sprintf("Warning for user: %s", user))
-      # Print out the warning
-      print(w)
-      # Return nothing
-      return(NULL)
-    },
-    finally = {
-      # Let the user know once the function has finished with execution
-      print(sprintf("Dataloader for %s finished.", user))
-    }
-  )
+hotel_bookings <- dataLoader(paste(usersDataFolder, "Data/", sep = ""), fileName)
+if(!is.null(hotel_bookings)){
+  # Prints first 6 rows so you can see the data
+  print(head(hotel_bookings))
+}else{
+  stop("No data has been loaded") 
 }
 
-# Var for switching the users
-userNum <- 1
-while(userNum < 5){
-  print("=============================================================")
-  # Go across the user profiles, save the data or throw an error if no data is saved at the end
-  switch( userNum,  
-          hotel_bookings <- dataLoader(dataFolderDaniel, fileName, "Daniel"),  
-          hotel_bookings <- dataLoader(dataFolderMihai, fileName, "Mihai"),  
-          hotel_bookings <- dataLoader(dataFolderZan, fileName, "Zan"),  
-          stop("No data has been loaded") # Stops the code HERE if no data has been loaded
-  ) 
-  userNum <- userNum + 1 
-  
-  # Once the data is found (from the user), break the loop
-  if(!is.null(hotel_bookings)){
-    # Prints first 6 rows so you can see the data
-    print(head(hotel_bookings))
-    break
-  }
-}
 print("=============================================================")
-
 #==============================================================================================================
 # Data exploration
 #==============================================================================================================
@@ -116,10 +81,10 @@ for (i in 1:length(hotelColNames)){
   print(tempTable) # Print num of occurrences
   
   # To save the files, works for Zan atm
-  # tempBarFile <- paste(hotelColNames[i], ".pdf", sep = "")
-  # tempTotalPath <- paste(dataFolderZan, "Graphs/", sep = "")
-  # tempFinalPath <- paste(tempTotalPath, tempBarFile, sep = "")
-  # pdf(tempFinalPath) 
+   tempBarFile <- paste(hotelColNames[i], ".pdf", sep = "")
+   tempTotalPath <- paste(paste(usersDataFolder, "Data/", sep = ""), "Graphs/", sep = "")
+   tempFinalPath <- paste(tempTotalPath, tempBarFile, sep = "")
+   pdf(tempFinalPath) 
   
   barplot(tempTable, main = hotelColNames[i], xlab = "Attributes", ylab = "Num. of occurrences") # Visualize num of occurrences
   # dev.off()
