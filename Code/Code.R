@@ -105,14 +105,16 @@ print("=============================================================")
 #==============================================================================================================
 summary(hotel_bookings)
 
+# Get the col names
 hotelColNames <- colnames(hotel_bookings)
 
+# Loop across hotelColNames
 for (i in 1:length(hotelColNames)){
   print("=============================================================")
-  print(hotelColNames[i])
-  tempTable <- table(hotel_bookings%>%dplyr::pull(i))
-  print(tempTable)
-  barplot(tempTable, main = hotelColNames[i])
+  print(hotelColNames[i]) # Print col name
+  tempTable <- table(hotel_bookings%>%dplyr::pull(i)) # Get num of occurrences
+  print(tempTable) # Print num of occurrences
+  barplot(tempTable, main = hotelColNames[i], xlab = "Attributes", ylab = "Num. of occurrences") # Visualize num of occurrences
   print("=============================================================")
 
 }
