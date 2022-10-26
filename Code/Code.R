@@ -31,7 +31,7 @@ library(dplyr)
 # Daniels data path
 dataFolderDaniel <- "~/Documents/BCU2/Masters/" # DANIEL change that to whatever your path is
 # Mihais data path
-dataFolderMihai <- "~/Documents/BCU2/Masters/" # MIHAI change that to whatever your path is
+dataFolderMihai <- "~/Uni/CMP726_Data_Mining/DataMiningCoursework/Data/"
 # Zans data path
 dataFolderZan <- "~/Documents/BCU2/Masters/CMP7206-A-S1-2022:3_Data_Mining/Coursework/DataMiningCoursework/Data/"
 
