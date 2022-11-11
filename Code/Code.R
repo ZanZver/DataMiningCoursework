@@ -65,6 +65,15 @@ if(!is.null(hotel_bookings)){
 }
 
 print("=============================================================")
+
+#==============================================================================================================
+# Drop columns
+#==============================================================================================================
+# Columns that are being dropped: agent,company
+#hotel_bookings <- subset(hotel_bookings, select = -c(agent,company) )
+
+print("=============================================================")
+
 #==============================================================================================================
 # Data exploration
 #==============================================================================================================
@@ -81,17 +90,16 @@ for (i in 1:length(hotelColNames)){
   print(tempTable) # Print num of occurrences
   
   # To save the files, works for Zan atm
-   tempBarFile <- paste(hotelColNames[i], ".pdf", sep = "")
-   tempTotalPath <- paste(paste(usersDataFolder, "Data/", sep = ""), "Graphs/", sep = "")
-   tempFinalPath <- paste(tempTotalPath, tempBarFile, sep = "")
-   pdf(tempFinalPath) 
-  
+  tempBarFile <- paste(hotelColNames[i], ".pdf", sep = "")
+  tempTotalPath <- paste(paste(usersDataFolder, "Data/", sep = ""), "Graphs/", sep = "")
+  tempFinalPath <- paste(tempTotalPath, tempBarFile, sep = "")
+  pdf(tempFinalPath) 
+  #jpeg(file=tempFinalPath)
   barplot(tempTable, main = hotelColNames[i], xlab = "Attributes", ylab = "Num. of occurrences") # Visualize num of occurrences
-  # dev.off()
+  dev.off()
   
   print("=============================================================")
 }
-
 
 #==============================================================================================================
 # Data preparation / Data pre-processing”
@@ -100,6 +108,7 @@ for (i in 1:length(hotelColNames)){
 str(hotel_bookings)
 # Check the column names
 colnames(hotel_bookings)
+
 
 # Satges based on this article: https://monkeylearn.com/blog/data-cleaning-steps/
 # 1) Remove irrelevant data
