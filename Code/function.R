@@ -53,7 +53,7 @@ binaryEncoder <- function(df, varString){
 ordinalEncoder <- function(df, name, orderList){
   cat.df <- df[, name, drop = FALSE]
   df <- encode_ordinal(cat.df, order = orderList)
-  df <- as.numeric(unlist(df %>% select(name)))
+  df <- as.numeric(unlist(df %>% select(all_of(name))))
   return (df)
 }
 
@@ -86,6 +86,9 @@ encodeTheData <-function(df){
   
   orderList <- c("A", "B", "C", "D", "E", "F", "G", "H", "I", "K", "L", "P")
   df$assigned_room_type <- ordinalEncoder(df, "assigned_room_type", orderList)
+  
+  print(df)
+  return (df)
 }
 
 

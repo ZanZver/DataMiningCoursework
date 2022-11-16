@@ -42,6 +42,9 @@ if(dir.exists(dataFolderDaniel)){
 #==============================================================================================================
 library(dplyr)
 library(explore)
+library(ggcorrplot)
+library(ggplot2)
+library(cleandata)
 
 source(paste(usersDataFolder, "Code/function.R", sep = ""))
 #==============================================================================================================
@@ -49,7 +52,7 @@ source(paste(usersDataFolder, "Code/function.R", sep = ""))
 #==============================================================================================================
 
 # Decide which file to use, lite dataset is used by default
-if(TRUE){
+if(FALSE){
   # Lite dataset, used for dev (only 10k rows)
   fileName <- "hotel_bookings_lite.csv"
 }else{
@@ -73,7 +76,15 @@ hotel_bookings <- na.omit(hotel_bookings)
 
 print("=============================================================")
 
-encodeTheData(hotel_bookings)
+hotel_bookings <- encodeTheData(hotel_bookings)
+str(hotel_bookings)
+
+
+pdf(paste(paste(usersDataFolder, "Data/", sep = ""), "my_plot.pdf", sep = ""))
+ggcorrplot(cor(hotel_bookings)) + 
+    theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust=1, size = 7),
+          axis.text.y = element_text(size = 7))
+dev.off() 
 
 #==============================================================================================================
 # Drop columns
