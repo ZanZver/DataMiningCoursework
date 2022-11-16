@@ -41,6 +41,7 @@ if(dir.exists(dataFolderDaniel)){
 # Library imports
 #==============================================================================================================
 library(dplyr)
+library(explore)
 
 source(paste(usersDataFolder, "Code/function.R", sep = ""))
 #==============================================================================================================
@@ -64,7 +65,15 @@ if(!is.null(hotel_bookings)){
   stop("No data has been loaded") 
 }
 
+# Remove agent and company
+hotel_bookings <- hotel_bookings[,!(names(hotel_bookings) %in% c("agent","company"))]
+
+# Remove na columns
+hotel_bookings <- na.omit(hotel_bookings) 
+
 print("=============================================================")
+
+encodeTheData(hotel_bookings)
 
 #==============================================================================================================
 # Drop columns
@@ -82,24 +91,8 @@ summary(hotel_bookings)
 # Get the col names
 hotelColNames <- colnames(hotel_bookings)
 
-# Loop across hotelColNames
-for (i in 1:length(hotelColNames)){
-  print("=============================================================")
-  print(hotelColNames[i]) # Print col name
-  tempTable <- table(hotel_bookings%>%dplyr::pull(i)) # Get num of occurrences
-  print(tempTable) # Print num of occurrences
-  
-  # To save the files, works for Zan atm
-  tempBarFile <- paste(hotelColNames[i], ".pdf", sep = "")
-  tempTotalPath <- paste(paste(usersDataFolder, "Data/", sep = ""), "Graphs/", sep = "")
-  tempFinalPath <- paste(tempTotalPath, tempBarFile, sep = "")
-  pdf(tempFinalPath) 
-  #jpeg(file=tempFinalPath)
-  barplot(tempTable, main = hotelColNames[i], xlab = "Attributes", ylab = "Num. of occurrences") # Visualize num of occurrences
-  dev.off()
-  
-  print("=============================================================")
-}
+# Explore hotel bookings
+explore(hotel_bookings)
 
 #==============================================================================================================
 # Data preparation / Data pre-processing”
@@ -109,13 +102,10 @@ str(hotel_bookings)
 # Check the column names
 colnames(hotel_bookings)
 
-
 # Satges based on this article: https://monkeylearn.com/blog/data-cleaning-steps/
 # 1) Remove irrelevant data
 
 # 2) Deduplicate your data
-duplicated(hotel_bookings)
-sum(duplicated(hotel_bookings))
 
 # 3) Fix structural errors
 
