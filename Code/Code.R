@@ -35,7 +35,7 @@ if(dir.exists(dataFolderDaniel)){
 # Library downloads 
 #==============================================================================================================
 #install.packages("dplyr")
-
+#install.packages("caret")
 
 #==============================================================================================================
 # Library imports
@@ -45,6 +45,7 @@ library(explore)
 library(ggcorrplot)
 library(ggplot2)
 library(cleandata)
+library(caret)
 
 source(paste(usersDataFolder, "Code/function.R", sep = ""))
 #==============================================================================================================
@@ -97,7 +98,7 @@ print("=============================================================")
 #==============================================================================================================
 # Data exploration
 #==============================================================================================================
-summary(hotel_bookings)
+str(hotel_bookings)
 
 # Get the col names
 hotelColNames <- colnames(hotel_bookings)
@@ -112,6 +113,30 @@ explore(hotel_bookings)
 str(hotel_bookings)
 # Check the column names
 colnames(hotel_bookings)
+
+# Split the data
+#specify the cross-validation method
+install.packages("Rfast")
+library(Rfast)
+
+x <- as.matrix(hotel_bookings%>% select(-is_canceled))
+y <- hotel_bookings$is_canceled
+mod <- knn.cv(#folds = NULL, 
+              nfolds = 10, 
+              stratified = TRUE,
+              seed = FALSE, 
+              y = y, 
+              x = x, 
+              k = c(3, 4), 
+              dist.type = "euclidean",
+              type = "C",
+              method = "average", 
+              freq.option = 0,
+              pred.ret = FALSE
+              #mem.eff = FALSE
+              )
+mod
+
 
 # Satges based on this article: https://monkeylearn.com/blog/data-cleaning-steps/
 # 1) Remove irrelevant data
