@@ -9,34 +9,51 @@
 # Available on GitHub https://github.com/ZanZver/DataMiningCoursework
 #==============================================================================================================
 
+# Our dataset paths
+# Daniels data path
+dataFolderDaniel <- "~/Daniel/Sleep/" # DANIEL change that to whatever your path is
+# Mihais data path
+dataFolderMihai <- "~/Uni/CMP726_Data_Mining/DataMiningCoursework/"
+# Zans data path
+dataFolderZan <- "~/Documents/BCU2/Masters/CMP7206-A-S1-2022:3_Data_Mining/Coursework/DataMiningCoursework/"
+
+if(dir.exists(dataFolderDaniel)){
+  print("Welcome Deniel")
+  usersDataFolder <- dataFolderDaniel
+}else if(dir.exists(dataFolderMihai)){
+  print("Welcome Mihai")
+  usersDataFolder <- dataFolderMihai
+}else if(dir.exists(dataFolderZan)){
+  print("Welcome Zan")
+  usersDataFolder <- dataFolderZan
+}else{
+  stop("No path has been found")
+}
 
 
 #==============================================================================================================
 # Library downloads 
 #==============================================================================================================
-
-
+#install.packages("dplyr")
+#install.packages("caret")
 
 #==============================================================================================================
 # Library imports
 #==============================================================================================================
+library(dplyr)
+library(explore)
+library(ggcorrplot)
+library(ggplot2)
+library(cleandata)
+library(caret)
 
-
-
+source(paste(usersDataFolder, "Code/function.R", sep = ""))
 #==============================================================================================================
 # Data import
 #==============================================================================================================
 
-# Our dataset paths
-# Daniels data path
-dataFolderDaniel <- "~/Documents/BCU2/Masters/" # DANIEL change that to whatever your path is
-# Mihais data path
-dataFolderMihai <- "~/Documents/BCU2/Masters/" # MIHAI change that to whatever your path is
-# Zans data path
-dataFolderZan <- "~/Documents/BCU2/Masters/CMP7206-A-S1-2022:3_Data_Mining/Coursework/DataMiningCoursework/Data/"
-
 # Decide which file to use, lite dataset is used by default
-if(TRUE){
+if(FALSE){
   # Lite dataset, used for dev (only 10k rows)
   fileName <- "hotel_bookings_lite.csv"
 }else{
@@ -44,62 +61,64 @@ if(TRUE){
   fileName <- "hotel_bookings.csv"
 }
 
-# Function to load all of the data
-dataLoader <- function(dataFolder, fileName, user) {
-  tryCatch(               
-    expr = {
-      # Join persons data path with lite data path
-      dataLite <- paste(dataFolder, fileName, sep = "")
-      # Read CSV from dataLite path
-      hotel_bookings <- read.csv(dataLite, stringsAsFactors=TRUE)
-      # Return CSV
-      return(hotel_bookings)
-    },
-    error = function(e){
-      # Inform the user on whose profile the error occurred
-      print(sprintf("Error for user: %s", user))
-      # Print out the error
-      print(e)
-      # Return nothing
-      return(NULL)
-    },
-    warning = function(w){
-      # Inform the user on whose profile the warning occurred
-      print(sprintf("Warning for user: %s", user))
-      # Print out the warning
-      print(w)
-      # Return nothing
-      return(NULL)
-    },
-    finally = {
-      # Let the user know once the function has finished with execution
-      print(sprintf("Dataloader for %s finished.", user))
-    }
-  )
+hotel_bookings <- dataLoader(paste(usersDataFolder, "Data/", sep = ""), fileName)
+if(!is.null(hotel_bookings)){
+  # Prints first 6 rows so you can see the data
+  print(head(hotel_bookings))
+}else{
+  stop("No data has been loaded") 
 }
 
-# Var for switching the users
-userNum <- 1
-while(userNum < 5){
-  print("=============================================================")
-  # Go across the user profiles, save the data or throw an error if no data is saved at the end
-  switch( userNum,  
-          hotel_bookings <- dataLoader(dataFolderDaniel, fileName, "Daniel"),  
-          hotel_bookings <- dataLoader(dataFolderMihai, fileName, "Mihai"),  
-          hotel_bookings <- dataLoader(dataFolderZan, fileName, "Zan"),  
-          stop("No data has been loaded") # Stops the code HERE if no data has been loaded
-  ) 
-  userNum <- userNum + 1 
-  
-  # Once the data is found (from the user), break the loop
-  if(!is.null(hotel_bookings)){
-    # Prints first 6 rows so you can see the data
-    print(head(hotel_bookings))
-    break
-  }
+ISO_Codes <- dataLoader(paste(usersDataFolder, "Data/SupportingData/", sep = ""), "ISO_Code.csv", FALSE)
+if(!is.null(ISO_Codes)){
+  # Prints first 6 rows so you can see the data
+  print(head(ISO_Codes))
+}else{
+  stop("No data has been loaded") 
 }
+
+# Remove agent and company
+hotel_bookings <- hotel_bookings[,!(names(hotel_bookings) %in% c("agent","company", "market_segment", "distribution_channel"))]
+
+# Remove na columns
+hotel_bookings <- na.omit(hotel_bookings) 
+
+# Remove items that are out of bounds
+hotel_bookings <- checkData(hotel_bookings, ISO_Codes)
+
+# Change the data types
+hotel_bookings <- transformDataTypes(hotel_bookings)
+
 print("=============================================================")
 
+hotel_bookings <- encodeTheData(hotel_bookings)
+str(hotel_bookings)
+
+
+pdf(paste(paste(usersDataFolder, "Data/", sep = ""), "my_plot.pdf", sep = ""))
+ggcorrplot(cor(hotel_bookings)) + 
+    theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust=1, size = 7),
+          axis.text.y = element_text(size = 7))
+dev.off() 
+
+#==============================================================================================================
+# Drop columns
+#==============================================================================================================
+# Columns that are being dropped: agent,company
+#hotel_bookings <- subset(hotel_bookings, select = -c(agent,company) )
+
+print("=============================================================")
+
+#==============================================================================================================
+# Data exploration
+#==============================================================================================================
+str(hotel_bookings)
+
+# Get the col names
+hotelColNames <- colnames(hotel_bookings)
+
+# Explore hotel bookings
+#explore(hotel_bookings)
 
 #==============================================================================================================
 # Data preparation / Data pre-processing”
@@ -109,12 +128,34 @@ str(hotel_bookings)
 # Check the column names
 colnames(hotel_bookings)
 
+# Split the data
+#specify the cross-validation method
+#install.packages("Rfast")
+library(Rfast)
+
+x <- as.matrix(hotel_bookings%>% select(-is_canceled))
+y <- hotel_bookings$is_canceled
+mod <- knn.cv(#folds = NULL, 
+              nfolds = 10, 
+              stratified = TRUE,
+              seed = FALSE, 
+              y = y, 
+              x = x, 
+              k = c(3, 4), 
+              dist.type = "euclidean",
+              type = "C",
+              method = "average", 
+              freq.option = 0,
+              pred.ret = FALSE
+              #mem.eff = FALSE
+              )
+mod
+
+
 # Satges based on this article: https://monkeylearn.com/blog/data-cleaning-steps/
 # 1) Remove irrelevant data
 
 # 2) Deduplicate your data
-duplicated(hotel_bookings)
-sum(duplicated(hotel_bookings))
 
 # 3) Fix structural errors
 
