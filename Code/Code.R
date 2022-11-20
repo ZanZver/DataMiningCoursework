@@ -69,11 +69,25 @@ if(!is.null(hotel_bookings)){
   stop("No data has been loaded") 
 }
 
+ISO_Codes <- dataLoader(paste(usersDataFolder, "Data/SupportingData/", sep = ""), "ISO_Code.csv", FALSE)
+if(!is.null(ISO_Codes)){
+  # Prints first 6 rows so you can see the data
+  print(head(ISO_Codes))
+}else{
+  stop("No data has been loaded") 
+}
+
 # Remove agent and company
-hotel_bookings <- hotel_bookings[,!(names(hotel_bookings) %in% c("agent","company"))]
+hotel_bookings <- hotel_bookings[,!(names(hotel_bookings) %in% c("agent","company", "market_segment", "distribution_channel"))]
 
 # Remove na columns
 hotel_bookings <- na.omit(hotel_bookings) 
+
+# Remove items that are out of bounds
+hotel_bookings <- checkData(hotel_bookings, ISO_Codes)
+
+# Change the data types
+hotel_bookings <- transformDataTypes(hotel_bookings)
 
 print("=============================================================")
 
@@ -104,7 +118,7 @@ str(hotel_bookings)
 hotelColNames <- colnames(hotel_bookings)
 
 # Explore hotel bookings
-explore(hotel_bookings)
+#explore(hotel_bookings)
 
 #==============================================================================================================
 # Data preparation / Data pre-processing”
@@ -116,7 +130,7 @@ colnames(hotel_bookings)
 
 # Split the data
 #specify the cross-validation method
-install.packages("Rfast")
+#install.packages("Rfast")
 library(Rfast)
 
 x <- as.matrix(hotel_bookings%>% select(-is_canceled))

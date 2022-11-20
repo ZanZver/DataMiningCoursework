@@ -1,13 +1,13 @@
 # Function to load all of the data
-dataLoader <- function(dataFolder, fileName) {
+dataLoader <- function(dataFolder, fileName, strAsFac=TRUE) {
   tryCatch(               
     expr = {
       # Join persons data path with lite data path
-      dataLite <- paste(dataFolder, fileName, sep = "")
+      fullDataPath <- paste(dataFolder, fileName, sep = "")
       # Read CSV from dataLite path
-      hotel_bookings <- read.csv(dataLite, stringsAsFactors=TRUE)
+      readFile <- read.csv(fullDataPath, stringsAsFactors=strAsFac)
       # Return CSV
-      return(hotel_bookings)
+      return(readFile)
     },
     error = function(e){
       # Inform the user on whose profile the error occurred
@@ -69,9 +69,9 @@ encodeTheData <-function(df){
   
   df$country <- labelEncoder(df$country)
   
-  df$market_segment <- labelEncoder(df$market_segment)
+  # df$market_segment <- labelEncoder(df$market_segment)
   
-  df$distribution_channel <- labelEncoder(df$distribution_channel)
+  # df$distribution_channel <- labelEncoder(df$distribution_channel)
   
   df$deposit_type <- labelEncoder(df$deposit_type)
   
@@ -91,8 +91,110 @@ encodeTheData <-function(df){
   return (df)
 }
 
+transformDataTypes <- function(df){
+  df <- transform(df,
+                  hotel <- as.character(hotel),
+                  is_canceled <- as.integer(is_canceled),
+                  lead_time <- as.integer(is_canceled),
+                  arrival_date_year <- as.integer(arrival_date_year),
+                  arrival_date_month <- as.character(arrival_date_month),
+                  arrival_date_week_number <- as.integer(arrival_date_week_number),
+                  arrival_date_day_of_month <- as.integer(arrival_date_day_of_month),
+                  stays_in_weekend_nights <- as.integer(stays_in_weekend_nights),
+                  stays_in_week_nights <- as.integer(stays_in_week_nights),
+                  adults <- as.integer(stays_in_week_nights),
+                  children <- as.integer(children),
+                  babies <- as.integer(babies),
+                  meal <- as.character(meal),
+                  country <- as.character(country),
+                  # market_segment,
+                  # distribution_channel,
+                  is_repeated_guest <- as.integer(is_repeated_guest),
+                  previous_cancellations <- as.integer(previous_cancellations),
+                  previous_bookings_not_canceled <- as.integer(previous_bookings_not_canceled),
+                  reserved_room_type <- as.character(reserved_room_type),
+                  assigned_room_type <- as.character(assigned_room_type),
+                  booking_changes <- as.integer(booking_changes),
+                  deposit_type <- as.character(deposit_type),
+                  days_in_waiting_list <- as.integer(days_in_waiting_list),
+                  customer_type <- as.character(customer_type),
+                  adr <- as.integer(adr),
+                  required_car_parking_spaces <- as.integer(required_car_parking_spaces),
+                  total_of_special_requests <- as.integer(total_of_special_requests),
+                  reservation_status <- as.character(reservation_status),
+                  reservation_status_date <- as.POSIXct(df$reservation_status_date, format="%Y-%m-%d")
+                  )
+  return(df)
+}
+
+checkData <- function(df,isoDF){
+  # "hotel" - Resort Hotel or City Hotel
+  mystr <- sapply(list(c("Resort Hotel", "City Hotel")), paste, collapse = "|")
+  df <- df[grepl(mystr, df$hotel),]
+  
+  # "is_canceled" - 0 or 1
+  mystr <- sapply(list(c(0, 1)), paste, collapse = "|")
+  df <- df[grepl(mystr, df$is_canceled),]
 
 
+  # "lead_time" - int
+  # "arrival_date_year" - int - maybe scope?
+  # "arrival_date_week_number" - int - maybe scope?
+  # "arrival_date_day_of_month" - int - maybe scope?
+  # "stays_in_weekend_nights" - int
+  # "stays_in_week_nights" - int
+  # "adults" - int
+  # "children" - int
+  # "babies" - int
+  # "previous_cancellations" - int
+  # "previous_bookings_not_canceled" - int
+  # "booking_changes" - int
+  # "days_in_waiting_list" - int
+  # "adr" - numeric
+  # "required_car_parking_spaces" - int
+  # "total_of_special_requests" - int
+  #df[df < 0] <- NA
+  #df <- na.omit(df)
+
+  # "arrival_date_month" - 1-12
+  mystr <- sapply(list(c(month.name)), paste, collapse = "|")
+  df <- df[grepl(mystr, df$arrival_date_month),]
+
+  # "meal" - Undefined/SC, BB, HB, FB
+  mystr <- sapply(list(c("Undefined","SC", "BB", "HB", "FB")), paste, collapse = "|")
+  df <- df[grepl(mystr, df$meal),]
+
+
+  # "is_repeated_guest" - 0 or 1
+  mystr <- sapply(list(c(0, 1)), paste, collapse = "|")
+  df <- df[grepl(mystr, df$is_repeated_guest),]
+
+  # "reserved_room_type" - "A","B","C","D","E","F","G","H","L","P"
+  mystr <- sapply(list(c("A","B","C","D","E","F","G","H","L","P")), paste, collapse = "|")
+  df <- df[grepl(mystr, df$reserved_room_type),]
+
+  # "assigned_room_type" - "A", "B", "C", "D", "E", "F", "G", "H", "I", "K", "L", "P"
+  mystr <- sapply(list(c("A", "B", "C", "D", "E", "F", "G", "H", "I", "K", "L", "P")), paste, collapse = "|")
+  df <- df[grepl(mystr, df$assigned_room_type),]
+
+  # "deposit_type" - No Deposit, Non Refund, Refundable
+  mystr <- sapply(list(c("No Deposit", "Non Refund", "Refundable")), paste, collapse = "|")
+  df <- df[grepl(mystr, df$deposit_type),]
+
+  # "customer_type" - Contract, Group, Transient, Transient-party
+  mystr <- sapply(list(c("Contract","Group", "Transient", "Transient-party")), paste, collapse = "|")
+  df <- df[grepl(mystr, df$customer_type),]
+
+  # "reservation_status" - Canceled, Check-Out, No-Show
+  mystr <- sapply(list(c("Canceled", "Check-Out", "No-Show")), paste, collapse = "|")
+  df <- df[grepl(mystr, df$reservation_status),]
+
+  # "country" - list of Alpha-3 code ISO standard can be found here: https://www.iso.org/obp/ui/#search
+  mystr <- sapply(list(levels(isoDF$Alpha3Code)), paste, collapse = "|")
+  df <- df[grepl(mystr, df$country),]
+  
+  return (df)
+}
 
 
 
