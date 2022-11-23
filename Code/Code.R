@@ -68,6 +68,7 @@ if(!is.null(hotel_bookings)){
 }else{
   stop("No data has been loaded") 
 }
+hotel_bookings_original <- hotel_bookings
 
 ISO_Codes <- dataLoader(paste(usersDataFolder, "Data/SupportingData/", sep = ""), "ISO_Code.csv", FALSE)
 if(!is.null(ISO_Codes)){
@@ -89,10 +90,19 @@ hotel_bookings <- checkData(hotel_bookings, ISO_Codes)
 # Change the data types
 hotel_bookings <- transformDataTypes(hotel_bookings)
 
+hotel_bookings_clean <- hotel_bookings
+
 print("=============================================================")
 
+# Encode the data
 hotel_bookings <- encodeTheData(hotel_bookings)
 str(hotel_bookings)
+
+hotel_bookings_clean_encoded <- hotel_bookings
+
+write.csv(hotel_bookings, 
+          paste(paste(usersDataFolder, "Data/", sep = ""), "hotel_bookings_clean.csv", sep = ""), 
+          row.names = TRUE)
 
 
 pdf(paste(paste(usersDataFolder, "Data/", sep = ""), "my_plot.pdf", sep = ""))
