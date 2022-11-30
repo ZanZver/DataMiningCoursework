@@ -79,7 +79,7 @@ if(!is.null(ISO_Codes)){
 }
 
 # Remove agent and company
-hotel_bookings <- hotel_bookings[,!(names(hotel_bookings) %in% c("agent","company", "market_segment", "distribution_channel"))]
+hotel_bookings <- hotel_bookings[,!(names(hotel_bookings) %in% c("agent","company", "reservation_status", "ReservationStatusDate"))]
 
 # Remove na columns
 hotel_bookings <- na.omit(hotel_bookings) 
@@ -151,7 +151,7 @@ mod <- knn.cv(#folds = NULL,
               seed = FALSE, 
               y = y, 
               x = x, 
-              k = c(3, 4), 
+              k = 6, 
               dist.type = "euclidean",
               type = "C",
               method = "average", 
@@ -160,6 +160,9 @@ mod <- knn.cv(#folds = NULL,
               #mem.eff = FALSE
               )
 mod
+
+# Create a dataframe to simplify charting
+plot.df = data.frame(test, predicted = fit)
 
 
 # Satges based on this article: https://monkeylearn.com/blog/data-cleaning-steps/
