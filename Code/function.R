@@ -77,9 +77,9 @@ encodeTheData <-function(df){
   
   df$customer_type <- labelEncoder(df$customer_type)
   
-  df$reservation_status <- labelEncoder(df$reservation_status)
+  #df$reservation_status <- labelEncoder(df$reservation_status)
   
-  df$reservation_status_date <- labelEncoder(df$reservation_status_date)
+  #df$reservation_status_date <- labelEncoder(df$reservation_status_date)
   
   orderList <- c("A","B","C","D","E","F","G","H","L","P")
   df$reserved_room_type <- ordinalEncoder(df, "reserved_room_type", orderList)
@@ -120,9 +120,9 @@ transformDataTypes <- function(df){
                   customer_type <- as.character(customer_type),
                   adr <- as.integer(adr),
                   required_car_parking_spaces <- as.integer(required_car_parking_spaces),
-                  total_of_special_requests <- as.integer(total_of_special_requests),
-                  reservation_status <- as.character(reservation_status),
-                  reservation_status_date <- as.POSIXct(df$reservation_status_date, format="%Y-%m-%d")
+                  total_of_special_requests <- as.integer(total_of_special_requests)
+                  #reservation_status <- as.character(reservation_status),
+                  #reservation_status_date <- as.POSIXct(df$reservation_status_date, format="%Y-%m-%d")
                   )
   return(df)
 }
@@ -186,8 +186,8 @@ checkData <- function(df,isoDF){
   df <- df[grepl(mystr, df$customer_type),]
 
   # "reservation_status" - Canceled, Check-Out, No-Show
-  mystr <- sapply(list(c("Canceled", "Check-Out", "No-Show")), paste, collapse = "|")
-  df <- df[grepl(mystr, df$reservation_status),]
+  #mystr <- sapply(list(c("Canceled", "Check-Out", "No-Show")), paste, collapse = "|")
+  #df <- df[grepl(mystr, df$reservation_status),]
 
   # "country" - list of Alpha-3 code ISO standard can be found here: https://www.iso.org/obp/ui/#search
   mystr <- sapply(list(levels(isoDF$Alpha3Code)), paste, collapse = "|")
