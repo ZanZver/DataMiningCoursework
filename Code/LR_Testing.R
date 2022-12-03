@@ -27,17 +27,13 @@ trControl <- trainControl(method = "repeatedcv",
 
 set.seed(69)
 
-
-mtry <- sqrt(ncol(hotel_bookings)) #the number of variables to be randomly sampled for each split
-tunegrid <- expand.grid(.mtry=mtry) #put it in a list for tuneGrid (cuz it only takes in lists)
-
+#the number of iterations is decided automatically using ROC. so there is no need to specify nIter :)
 fit <- train(is_canceled ~ .,
              data = training,
-             method = 'rf',
+             method = 'LogitBoost',
              tuneLength = 18,
              trControl = trControl,
-             metric = "ROC",
-             tuneGrid = tunegrid)
+             metric = "ROC")
 
 fit
 
