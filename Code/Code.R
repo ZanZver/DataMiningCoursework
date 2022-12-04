@@ -9,9 +9,14 @@
 # Available on GitHub https://github.com/ZanZver/DataMiningCoursework
 #==============================================================================================================
 
+
+dev <- TRUE #if(TRUE) uses litedataset
+
+
+
 # Our dataset paths
 # Daniels data path
-dataFolderDaniel <- "~/Daniel/Sleep/" # DANIEL change that to whatever your path is
+dataFolderDaniel <- "D:/UNI/CMP7206-DM/DataMiningCoursework/"
 # Mihais data path
 dataFolderMihai <- "~/Uni/CMP726_Data_Mining/DataMiningCoursework/"
 # Zans data path
@@ -53,7 +58,7 @@ source(paste(usersDataFolder, "Code/function.R", sep = ""))
 #==============================================================================================================
 
 # Decide which file to use, lite dataset is used by default
-if(FALSE){
+if(dev){
   # Lite dataset, used for dev (only 10k rows)
   fileName <- "hotel_bookings_lite.csv"
 }else{
