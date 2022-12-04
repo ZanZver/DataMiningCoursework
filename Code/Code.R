@@ -79,7 +79,7 @@ if(!is.null(ISO_Codes)){
 }
 
 # Remove agent and company
-hotel_bookings <- hotel_bookings[,!(names(hotel_bookings) %in% c("agent","company", "reservation_status", "ReservationStatusDate"))]
+hotel_bookings <- hotel_bookings[,!(names(hotel_bookings) %in% c("agent","company", "reservation_status", "reservation_status_date"))]
 
 # Remove na columns
 hotel_bookings <- na.omit(hotel_bookings) 

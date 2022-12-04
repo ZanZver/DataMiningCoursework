@@ -69,9 +69,9 @@ encodeTheData <-function(df){
   
   df$country <- labelEncoder(df$country)
   
-  # df$market_segment <- labelEncoder(df$market_segment)
+  df$market_segment <- labelEncoder(df$market_segment)
   
-  # df$distribution_channel <- labelEncoder(df$distribution_channel)
+  df$distribution_channel <- labelEncoder(df$distribution_channel)
   
   df$deposit_type <- labelEncoder(df$deposit_type)
   
