@@ -11,4 +11,14 @@ Documents/LaTeX/Report.aux
 Documents/LaTeX/Report.bbl
 Documents/LaTeX/Report.bcf
 *.aux
-.aux
+*.toc
+*.gz
+*.out
+*.lot
+*.log
+*.lof
+*.fls
+*.fdb_latexmk
+*.blg
+*.bcf
+*.bbl
