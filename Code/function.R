@@ -196,7 +196,36 @@ checkData <- function(df,isoDF){
   return (df)
 }
 
-
+knnFunction <- function(data, cfSavePath, knnNumber, kfoldNumber){
+  x <- data[,-2] # Select everything except is_canceled from data 
+  y <- as.factor(data[,2]) # Select only is_canceled from data
+  
+  # function docs https://www.rdocumentation.org/packages/KODAMA/versions/2.2/topics/knn.double.cv
+  model <- knn.double.cv(Xdata = x,
+                         Ydata = y,
+                         compmax = knnNumber,
+                         runn = kfoldNumber)
+  
+  # Create confusion matrix
+  confMatrix <- table(model$Ypred,y)
+  
+  # Start "drawing" confusion matrix
+  TClass <- factor(c("T", "T", "F", "F"))
+  PClass <- factor(c("T", "F", "T", "F"))
+  Y      <- c(confMatrix[1:4])
+  df <- data.frame(TClass, PClass, Y)
+  
+  pdf(paste(cfSavePath, "ConfusionMatrix.pdf", sep = ""))
+  p <- ggplot(data =  df, mapping = aes(x = TClass, y = PClass)) +
+    geom_tile(aes(fill = Y), colour = "white") +
+    geom_text(aes(label = sprintf("%1.0f", Y)), vjust = 1) +
+    scale_fill_gradient(low = "lightgreen", high = "darkgreen") +
+    labs(x = "Actual values", y = "Expected values", title = "Confusion Matrix") +
+    theme_bw() + 
+    theme(legend.position = "none", plot.title = element_text(hjust = 0.5))
+  print(p)
+  dev.off() 
+}
 
 
 

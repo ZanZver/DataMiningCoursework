@@ -6,3 +6,9 @@ Data/.Rhistory
 Code/.RData
 Code/.Rhistory
 Data/Graphs/*
+Documents/LaTeX/Report.aux
+Documents/LaTeX/Report.aux
+Documents/LaTeX/Report.bbl
+Documents/LaTeX/Report.bcf
+*.aux
+.aux

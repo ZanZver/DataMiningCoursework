@@ -10,7 +10,7 @@
 #==============================================================================================================
 
 
-dev <- TRUE #if(TRUE) uses litedataset
+dev <- FALSE #if(TRUE) uses litedataset
 
 
 
@@ -51,6 +51,10 @@ library(ggcorrplot)
 library(ggplot2)
 library(cleandata)
 library(caret)
+
+library(KODAMA)
+library(ggplot2)
+library(cleandata)
 
 source(paste(usersDataFolder, "Code/function.R", sep = ""))
 #==============================================================================================================
@@ -146,25 +150,11 @@ colnames(hotel_bookings)
 # Split the data
 #specify the cross-validation method
 #install.packages("Rfast")
-library(Rfast)
 
-x <- as.matrix(hotel_bookings%>% select(-is_canceled))
-y <- hotel_bookings$is_canceled
-mod <- knn.cv(#folds = NULL, 
-              nfolds = 10, 
-              stratified = TRUE,
-              seed = FALSE, 
-              y = y, 
-              x = x, 
-              k = 6, 
-              dist.type = "euclidean",
-              type = "C",
-              method = "average", 
-              freq.option = 0,
-              pred.ret = FALSE
-              #mem.eff = FALSE
-              )
-mod
+knn_model <- knnFunction(head(hotel_bookings, 2000), 
+                         paste(usersDataFolder, "Data/", sep = ""), 
+                         knnNumber = 8,
+                         kfoldNumber = 10)
 
 # Create a dataframe to simplify charting
 plot.df = data.frame(test, predicted = fit)
