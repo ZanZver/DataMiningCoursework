@@ -203,8 +203,8 @@ knnFunction <- function(data, cfSavePath, knnNumber, kfoldNumber){
   # function docs https://www.rdocumentation.org/packages/KODAMA/versions/2.2/topics/knn.double.cv
   model <- knn.double.cv(Xdata = x,
                          Ydata = y,
-                         compmax = knnNumber,
-                         runn = kfoldNumber)
+                         compmax = knnNumber)#,
+                         #runn = kfoldNumber)
   
   # Create confusion matrix
   confMatrix <- table(model$Ypred,y)
@@ -227,7 +227,13 @@ knnFunction <- function(data, cfSavePath, knnNumber, kfoldNumber){
   dev.off() 
 }
 
+rfFunction <- function(data){
+  
+}
 
+lrFunction <- function(data){
+  
+}
 
 
 

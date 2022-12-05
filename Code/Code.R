@@ -45,16 +45,26 @@ if(dir.exists(dataFolderDaniel)){
 #==============================================================================================================
 # Library imports
 #==============================================================================================================
-library(dplyr)
-library(explore)
-library(ggcorrplot)
-library(ggplot2)
-library(cleandata)
-library(caret)
 
-library(KODAMA)
-library(ggplot2)
-library(cleandata)
+packages <- c("dplyr",
+              "explore",
+              "ggcorrplot",
+              "ggplot2",
+              "cleandata",
+              "caret",
+              "KODAMA")
+
+for(p in packages)
+{
+  tryCatch(test <- require(p,character.only=T), 
+           warning=function(w) return())
+  if(!test)
+  {
+    print(paste("Package", p, "not found. Installing Package!"))
+    install.packages(p)
+    require(p)
+  }
+}
 
 source(paste(usersDataFolder, "Code/function.R", sep = ""))
 #==============================================================================================================
@@ -151,9 +161,10 @@ colnames(hotel_bookings)
 #specify the cross-validation method
 #install.packages("Rfast")
 
-knn_model <- knnFunction(head(hotel_bookings, 2000), 
+# Parameter kfoldNumber is not working 100% atm
+knn_model <- knnFunction(hotel_bookings, 
                          paste(usersDataFolder, "Data/", sep = ""), 
-                         knnNumber = 8,
+                         knnNumber = 10,
                          kfoldNumber = 10)
 
 # Create a dataframe to simplify charting
