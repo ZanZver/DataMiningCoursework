@@ -215,7 +215,7 @@ knnFunction <- function(data, cfSavePath, knnNumber, kfoldNumber){
   Y      <- c(confMatrix[1:4])
   df <- data.frame(TClass, PClass, Y)
   
-  pdf(paste(cfSavePath, "ConfusionMatrix.pdf", sep = ""))
+  pdf(paste(cfSavePath, "KNNConfusionMatrix.pdf", sep = ""))
   p <- ggplot(data =  df, mapping = aes(x = TClass, y = PClass)) +
     geom_tile(aes(fill = Y), colour = "white") +
     geom_text(aes(label = sprintf("%1.0f", Y)), vjust = 1) +
@@ -227,11 +227,118 @@ knnFunction <- function(data, cfSavePath, knnNumber, kfoldNumber){
   dev.off() 
 }
 
-rfFunction <- function(data){
+rfFunction <- function(data, cfSavePath){
+  library(caret)
+  library(pROC)
+  library(mlbench)
+  data$is_canceled[data$is_canceled == 0] <- 'No'
+  data$is_canceled[data$is_canceled == 1] <- 'Yes'
+  data$is_canceled <- factor(data$is_canceled)
   
+  set.seed(1234)
+  ind <- sample(2, nrow(data), replace = T, prob = c(0.7, 0.3))
+  ind
+  training <- data[ind == 1,]
+  head(training)
+  test <- data[ind == 2,]
+  head(test)
+  
+  trControl <- trainControl(method = "repeatedcv",
+                            number = 3,
+                            repeats = 3,
+                            classProbs = TRUE,
+                            summaryFunction = twoClassSummary)
+  
+  set.seed(69)
+  
+  
+  mtry <- sqrt(ncol(data)) #the number of variables to be randomly sampled for each split
+  tunegrid <- expand.grid(.mtry=mtry) #put it in a list for tuneGrid (cuz it only takes in lists)
+  
+  model <- train(is_canceled ~ .,
+               data = training,
+               method = 'rf',
+               tuneLength = 18,
+               trControl = trControl,
+               metric = "ROC",
+               tuneGrid = tunegrid)
+  
+  # Create confusion matrix
+  pred <- predict(model, newdata = test)
+  confMatrix <- confusionMatrix(pred, test$is_canceled)[["table"]]
+  
+  # Start "drawing" confusion matrix
+  TClass <- factor(c("T", "T", "F", "F"))
+  PClass <- factor(c("T", "F", "T", "F"))
+  Y      <- c(confMatrix[1:4])
+  df <- data.frame(TClass, PClass, Y)
+  
+  pdf(paste(cfSavePath, "RFConfusionMatrix.pdf", sep = ""))
+  p <- ggplot(data =  df, mapping = aes(x = TClass, y = PClass)) +
+    geom_tile(aes(fill = Y), colour = "white") +
+    geom_text(aes(label = sprintf("%1.0f", Y)), vjust = 1) +
+    scale_fill_gradient(low = "lightgreen", high = "darkgreen") +
+    labs(x = "Actual values", y = "Expected values", title = "Confusion Matrix") +
+    theme_bw() + 
+    theme(legend.position = "none", plot.title = element_text(hjust = 0.5))
+  print(p)
+  dev.off() 
 }
 
-lrFunction <- function(data){
+lrFunction <- function(data, cfSavePath){
+  library(caret)
+  library(pROC)
+  library(mlbench)
+  data$is_canceled[data$is_canceled == 0] <- 'No'
+  data$is_canceled[data$is_canceled == 1] <- 'Yes'
+  data$is_canceled <- factor(data$is_canceled)
+  
+  set.seed(1234)
+  ind <- sample(2, nrow(data), replace = T, prob = c(0.7, 0.3))
+  ind
+  training <- data[ind == 1,]
+  head(training)
+  test <- data[ind == 2,]
+  head(test)
+  
+  trControl <- trainControl(method = "repeatedcv",
+                            number = 3,
+                            repeats = 3,
+                            classProbs = TRUE,
+                            summaryFunction = twoClassSummary)
+  
+  set.seed(69)
+  
+  #the number of iterations is decided automatically using ROC. so there is no need to specify nIter :)
+  model <- train(is_canceled ~ .,
+               data = training,
+               method = 'LogitBoost',
+               tuneLength = 18,
+               trControl = trControl,
+               metric = "ROC")
+  
+  # Create confusion matrix
+  
+  pred <- predict(model, newdata = test)
+  confMatrix <- confusionMatrix(pred, test$is_canceled)[["table"]]
+  
+  
+  # Start "drawing" confusion matrix
+  TClass <- factor(c("T", "T", "F", "F"))
+  PClass <- factor(c("T", "F", "T", "F"))
+  Y      <- c(confMatrix[1:4])
+  df <- data.frame(TClass, PClass, Y)
+  
+  pdf(paste(cfSavePath, "LRConfusionMatrix.pdf", sep = ""))
+  p <- ggplot(data =  df, mapping = aes(x = TClass, y = PClass)) +
+    geom_tile(aes(fill = Y), colour = "white") +
+    geom_text(aes(label = sprintf("%1.0f", Y)), vjust = 1) +
+    scale_fill_gradient(low = "lightgreen", high = "darkgreen") +
+    labs(x = "Actual values", y = "Expected values", title = "Confusion Matrix") +
+    theme_bw() + 
+    theme(legend.position = "none", plot.title = element_text(hjust = 0.5))
+  print(p)
+  dev.off() 
   
 }
 
