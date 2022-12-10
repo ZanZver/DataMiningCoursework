@@ -22,3 +22,5 @@ Documents/LaTeX/Report.bcf
 *.blg
 *.bcf
 *.bbl
+Code/KNN_Testing4.R
+*.R
