@@ -12,8 +12,6 @@
 
 dev <- FALSE #if(TRUE) uses litedataset
 
-
-
 # Our dataset paths
 # Daniels data path
 dataFolderDaniel <- "D:/UNI/CMP7206-DM/DataMiningCoursework/"
@@ -52,7 +50,10 @@ packages <- c("dplyr",
               "ggplot2",
               "cleandata",
               "caret",
-              "KODAMA")
+              "KODAMA",
+              "pROC",
+              "mlbench",
+              "Rfast")
 
 for(p in packages)
 {
@@ -97,8 +98,8 @@ if(!is.null(ISO_Codes)){
   stop("No data has been loaded") 
 }
 
-# Remove agent and company
-hotel_bookings <- hotel_bookings[,!(names(hotel_bookings) %in% c("agent","company", "reservation_status", "reservation_status_date"))]
+# Remove agent, company, reservation_status and reservation_status_date
+hotel_bookings <- hotel_bookings[,!(names(hotel_bookings) %in% c("agent","company", "reservation_status", "reservation_status_date","X"))]
 
 # Remove na columns
 hotel_bookings <- na.omit(hotel_bookings) 
@@ -131,44 +132,49 @@ ggcorrplot(cor(hotel_bookings)) +
 dev.off() 
 
 #==============================================================================================================
-# Drop columns
-#==============================================================================================================
-# Columns that are being dropped: agent,company
-#hotel_bookings <- subset(hotel_bookings, select = -c(agent,company) )
-
-print("=============================================================")
-
-#==============================================================================================================
 # Data exploration
 #==============================================================================================================
-str(hotel_bookings)
-
-# Get the col names
-hotelColNames <- colnames(hotel_bookings)
-
-# Explore hotel bookings
 #explore(hotel_bookings)
 
 #==============================================================================================================
 # Data preparation / Data pre-processing”
 #==============================================================================================================
 # Inspect the data
-str(hotel_bookings)
+#str(hotel_bookings)
 # Check the column names
-colnames(hotel_bookings)
+#colnames(hotel_bookings)
 
-# Split the data
-#specify the cross-validation method
-#install.packages("Rfast")
+hotel_bookings_lite <- head(hotel_bookings,50000)
 
-# Parameter kfoldNumber is not working 100% atm
-knn_model <- knnFunction(hotel_bookings, 
-                         paste(usersDataFolder, "Data/", sep = ""), 
-                         knnNumber = 10,
-                         kfoldNumber = 10)
+dataSplit <- dataSpliter(hotel_bookings_lite, 1234)
+globalTraining <- dataSplit[[1]]
+globalTest <- dataSplit[[2]]
+globalMtry <- dataSplit[[3]]
+globalTunegrid <- dataSplit[[4]]
 
-# Create a dataframe to simplify charting
-plot.df = data.frame(test, predicted = fit)
+
+source(paste(usersDataFolder, "Code/function.R", sep = ""))
+
+knnFunction(paste(usersDataFolder, "Data/", sep = ""), 
+             knnNumber = 3, 
+             training = globalTraining, 
+             test = globalTest, 
+             tunegrid = globalTunegrid)
+
+rfFunction(paste(usersDataFolder, "Data/", sep = ""),
+           training = globalTraining,
+           test = globalTest,
+           mtry = globalMtry,
+           tunegrid = globalTunegrid
+           )
+
+lrFunction(paste(usersDataFolder, "Data/", sep = ""),
+           training = globalTraining,
+           test = globalTest,
+           mtry = globalMtry,
+           tunegrid = globalTunegrid)
+
+#plot.df = data.frame(test, predicted = fit)
 
 
 # Satges based on this article: https://monkeylearn.com/blog/data-cleaning-steps/

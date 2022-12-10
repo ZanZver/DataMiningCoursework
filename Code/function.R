@@ -196,76 +196,25 @@ checkData <- function(df,isoDF){
   return (df)
 }
 
-knnFunction <- function(data, cfSavePath, knnNumber, kfoldNumber){
-  x <- data[,-2] # Select everything except is_canceled from data 
-  y <- as.factor(data[,2]) # Select only is_canceled from data
-  
-  # function docs https://www.rdocumentation.org/packages/KODAMA/versions/2.2/topics/knn.double.cv
-  model <- knn.double.cv(Xdata = x,
-                         Ydata = y,
-                         compmax = knnNumber)#,
-                         #runn = kfoldNumber)
-  
-  # Create confusion matrix
-  confMatrix <- table(model$Ypred,y)
-  
-  # Start "drawing" confusion matrix
-  TClass <- factor(c("T", "T", "F", "F"))
-  PClass <- factor(c("T", "F", "T", "F"))
-  Y      <- c(confMatrix[1:4])
-  df <- data.frame(TClass, PClass, Y)
-  
-  pdf(paste(cfSavePath, "KNNConfusionMatrix.pdf", sep = ""))
-  p <- ggplot(data =  df, mapping = aes(x = TClass, y = PClass)) +
-    geom_tile(aes(fill = Y), colour = "white") +
-    geom_text(aes(label = sprintf("%1.0f", Y)), vjust = 1) +
-    scale_fill_gradient(low = "lightgreen", high = "darkgreen") +
-    labs(x = "Actual values", y = "Expected values", title = "Confusion Matrix") +
-    theme_bw() + 
-    theme(legend.position = "none", plot.title = element_text(hjust = 0.5))
-  print(p)
-  dev.off() 
-}
-
-rfFunction <- function(data, cfSavePath){
-  library(caret)
-  library(pROC)
-  library(mlbench)
+dataSpliter <- function(data, mySeed=1234){
   data$is_canceled[data$is_canceled == 0] <- 'No'
   data$is_canceled[data$is_canceled == 1] <- 'Yes'
   data$is_canceled <- factor(data$is_canceled)
   
-  set.seed(1234)
+  set.seed(mySeed)
   ind <- sample(2, nrow(data), replace = T, prob = c(0.7, 0.3))
-  ind
   training <- data[ind == 1,]
-  head(training)
   test <- data[ind == 2,]
-  head(test)
   
-  trControl <- trainControl(method = "repeatedcv",
-                            number = 3,
-                            repeats = 3,
-                            classProbs = TRUE,
-                            summaryFunction = twoClassSummary)
-  
-  set.seed(69)
-  
-  
+  set.seed(mySeed)
   mtry <- sqrt(ncol(data)) #the number of variables to be randomly sampled for each split
   tunegrid <- expand.grid(.mtry=mtry) #put it in a list for tuneGrid (cuz it only takes in lists)
   
-  model <- train(is_canceled ~ .,
-               data = training,
-               method = 'rf',
-               tuneLength = 18,
-               trControl = trControl,
-               metric = "ROC",
-               tuneGrid = tunegrid)
-  
-  # Create confusion matrix
-  pred <- predict(model, newdata = test)
-  confMatrix <- confusionMatrix(pred, test$is_canceled)[["table"]]
+  return(list(training, test, mtry, tunegrid))
+}
+
+createConfusionMatrix <- function(pred, test, cfSavePath, cfFileName, cfTitle){
+  confMatrix <- confusionMatrix(pred, test$is_canceled )[["table"]]
   
   # Start "drawing" confusion matrix
   TClass <- factor(c("T", "T", "F", "F"))
@@ -273,42 +222,63 @@ rfFunction <- function(data, cfSavePath){
   Y      <- c(confMatrix[1:4])
   df <- data.frame(TClass, PClass, Y)
   
-  pdf(paste(cfSavePath, "RFConfusionMatrix.pdf", sep = ""))
+  pdf(paste(cfSavePath, cfFileName, sep = ""))
   p <- ggplot(data =  df, mapping = aes(x = TClass, y = PClass)) +
     geom_tile(aes(fill = Y), colour = "white") +
     geom_text(aes(label = sprintf("%1.0f", Y)), vjust = 1) +
     scale_fill_gradient(low = "lightgreen", high = "darkgreen") +
-    labs(x = "Actual values", y = "Expected values", title = "Confusion Matrix") +
-    theme_bw() + 
+    labs(x = "Actual values", y = "Expected values", title = cfTitle) +
+    theme_bw() +
     theme(legend.position = "none", plot.title = element_text(hjust = 0.5))
   print(p)
-  dev.off() 
+  dev.off()
 }
 
-lrFunction <- function(data, cfSavePath){
-  library(caret)
-  library(pROC)
-  library(mlbench)
-  data$is_canceled[data$is_canceled == 0] <- 'No'
-  data$is_canceled[data$is_canceled == 1] <- 'Yes'
-  data$is_canceled <- factor(data$is_canceled)
+knnFunction <- function(cfSavePath, knnNumber, kfoldNumber, training, test, tunegrid){
+  trControl <- trainControl(method = "repeatedcv", 
+                         number = 3, 
+                         repeats = 3,
+                         classProbs = TRUE, 
+                         summaryFunction = twoClassSummary)
+  #set.seed(3333)
+  model <- train(is_canceled ~., 
+                   data = training, 
+                   method = "knn",
+                   tuneLength = 18,
+                   trControl=trControl,
+                   metric = "ROC")
   
-  set.seed(1234)
-  ind <- sample(2, nrow(data), replace = T, prob = c(0.7, 0.3))
-  ind
-  training <- data[ind == 1,]
-  head(training)
-  test <- data[ind == 2,]
-  head(test)
-  
+  pred <- predict(model, newdata = test)
+  createConfusionMatrix(pred, test, cfSavePath, cfFileName = "KNNConfusionMatrix.pdf", cfTitle = "KNN Confusion Matrix")
+}
+
+rfFunction <- function(cfSavePath, training, test, mtry, tunegrid){
   trControl <- trainControl(method = "repeatedcv",
                             number = 3,
                             repeats = 3,
                             classProbs = TRUE,
                             summaryFunction = twoClassSummary)
   
-  set.seed(69)
-  
+  model <- train(is_canceled ~ .,
+                 data = training,
+                 method = 'rf',
+                 tuneLength = 18,
+                 trControl = trControl,
+                 metric = "ROC",
+                 tuneGrid = tunegrid)
+
+  # Create confusion matrix
+  pred <- predict(model, newdata = test)
+  createConfusionMatrix(pred, test, cfSavePath, cfFileName = "RFConfusionMatrix.pdf", cfTitle = "Random Forest Confusion Matrix")
+}
+
+lrFunction <- function(cfSavePath, training, test, mtry, tunegrid){
+  trControl <- trainControl(method = "repeatedcv",
+                            number = 3,
+                            repeats = 3,
+                            classProbs = TRUE,
+                            summaryFunction = twoClassSummary)
+
   #the number of iterations is decided automatically using ROC. so there is no need to specify nIter :)
   model <- train(is_canceled ~ .,
                data = training,
@@ -318,28 +288,8 @@ lrFunction <- function(data, cfSavePath){
                metric = "ROC")
   
   # Create confusion matrix
-  
   pred <- predict(model, newdata = test)
-  confMatrix <- confusionMatrix(pred, test$is_canceled)[["table"]]
-  
-  
-  # Start "drawing" confusion matrix
-  TClass <- factor(c("T", "T", "F", "F"))
-  PClass <- factor(c("T", "F", "T", "F"))
-  Y      <- c(confMatrix[1:4])
-  df <- data.frame(TClass, PClass, Y)
-  
-  pdf(paste(cfSavePath, "LRConfusionMatrix.pdf", sep = ""))
-  p <- ggplot(data =  df, mapping = aes(x = TClass, y = PClass)) +
-    geom_tile(aes(fill = Y), colour = "white") +
-    geom_text(aes(label = sprintf("%1.0f", Y)), vjust = 1) +
-    scale_fill_gradient(low = "lightgreen", high = "darkgreen") +
-    labs(x = "Actual values", y = "Expected values", title = "Confusion Matrix") +
-    theme_bw() + 
-    theme(legend.position = "none", plot.title = element_text(hjust = 0.5))
-  print(p)
-  dev.off() 
-  
+  createConfusionMatrix(pred, test, cfSavePath, cfFileName = "LRConfusionMatrix.pdf", cfTitle = "Linear regression Confusion Matrix")
 }
 
 
