@@ -20,6 +20,8 @@ R: Version 4.2.1
 ### Dataset
 
 Size of the dataset is 16.9 MB. It contains 32 columns and 119391 rows. In the table bellow, you can see all the variables and their descriptions.
+Source: https://www.kaggle.com/datasets/jessemostipak/hotel-booking-demand
+
 
 Variable | Type | Description | Source/Engineering
 ---|---|---|---
