@@ -115,7 +115,7 @@ hotel_bookings_clean <- hotel_bookings
 print("=============================================================")
 
 # Encode the data
-hotel_bookings <- encodeTheData(hotel_bookings)
+hotel_bookings <- encodeTheData(hotel_bookings,ISO_Codes)
 str(hotel_bookings)
 
 hotel_bookings_clean_encoded <- hotel_bookings
@@ -155,20 +155,22 @@ globalTunegrid <- dataSplit[[4]]
 
 source(paste(usersDataFolder, "Code/function.R", sep = ""))
 
-knnFunction(paste(usersDataFolder, "Data/", sep = ""), 
+knnModel <- knnFunction(paste(usersDataFolder, "Data/", sep = ""), 
              knnNumber = 3, 
              training = globalTraining, 
              test = globalTest, 
              tunegrid = globalTunegrid)
 
-rfFunction(paste(usersDataFolder, "Data/", sep = ""),
+knnModel
+
+rfModel <- rfFunction(paste(usersDataFolder, "Data/", sep = ""),
            training = globalTraining,
            test = globalTest,
            mtry = globalMtry,
            tunegrid = globalTunegrid
            )
 
-lrFunction(paste(usersDataFolder, "Data/", sep = ""),
+lrModel <- lrFunction(paste(usersDataFolder, "Data/", sep = ""),
            training = globalTraining,
            test = globalTest,
            mtry = globalMtry,

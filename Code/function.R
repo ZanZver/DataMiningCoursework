@@ -57,7 +57,7 @@ ordinalEncoder <- function(df, name, orderList){
   return (df)
 }
 
-encodeTheData <-function(df){
+encodeTheData <-function(df,ISO_Codes){
   df$hotel <- binaryEncoder(df$hotel,"City Hotel")
   
   orderList <- c("January", "February", "March", "April", "May", "June", "July", 
@@ -87,7 +87,15 @@ encodeTheData <-function(df){
   orderList <- c("A", "B", "C", "D", "E", "F", "G", "H", "I", "K", "L", "P")
   df$assigned_room_type <- ordinalEncoder(df, "assigned_room_type", orderList)
   
-  print(df)
+  # Create new dataframe with just GPD data and Country
+  justGDP <- data.frame(GDP = ISO_Codes$GDP, Country = ISO_Codes$Alpha3Code)
+  # Arrange GPD ASC
+  justGDP <- arrange(justGDP, GDP)
+  # Create a new list based on the Country
+  justGDPList <- as.character(justGDP$Country)
+  
+  df$country <- ordinalEncoder(df, "country", justGDPList)
+
   return (df)
 }
 
@@ -250,6 +258,8 @@ knnFunction <- function(cfSavePath, knnNumber, kfoldNumber, training, test, tune
   
   pred <- predict(model, newdata = test)
   createConfusionMatrix(pred, test, cfSavePath, cfFileName = "KNNConfusionMatrix.pdf", cfTitle = "KNN Confusion Matrix")
+  
+  return(model)
 }
 
 rfFunction <- function(cfSavePath, training, test, mtry, tunegrid){
@@ -270,6 +280,8 @@ rfFunction <- function(cfSavePath, training, test, mtry, tunegrid){
   # Create confusion matrix
   pred <- predict(model, newdata = test)
   createConfusionMatrix(pred, test, cfSavePath, cfFileName = "RFConfusionMatrix.pdf", cfTitle = "Random Forest Confusion Matrix")
+  
+  return(model)
 }
 
 lrFunction <- function(cfSavePath, training, test, mtry, tunegrid){
@@ -290,6 +302,8 @@ lrFunction <- function(cfSavePath, training, test, mtry, tunegrid){
   # Create confusion matrix
   pred <- predict(model, newdata = test)
   createConfusionMatrix(pred, test, cfSavePath, cfFileName = "LRConfusionMatrix.pdf", cfTitle = "Linear regression Confusion Matrix")
+  
+  return(model)
 }
 
 
