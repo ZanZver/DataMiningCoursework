@@ -1,0 +1,19 @@
+\babel@toc {english}{}\relax 
+\contentsline {section}{\numberline {1}Section title}{3}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Subsection}{3}{subsection.1.1}%
+\contentsline {section}{\numberline {2}Domain description}{4}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Subsection}{4}{subsection.2.1}%
+\contentsline {section}{\numberline {3}Problem definition}{5}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Subsection}{5}{subsection.3.1}%
+\contentsline {section}{\numberline {4}Literature review}{6}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Subsection}{6}{subsection.4.1}%
+\contentsline {section}{\numberline {5}Dataset description}{7}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Subsection}{7}{subsection.5.1}%
+\contentsline {section}{\numberline {6}Dataset pre-processing}{8}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Subsection}{8}{subsection.6.1}%
+\contentsline {section}{\numberline {7}Experiments}{9}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Subsection}{9}{subsection.7.1}%
+\contentsline {section}{\numberline {8}Analysis, Results and Conclusions}{10}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Subsection}{10}{subsection.8.1}%
+\contentsline {section}{\numberline {9}References}{11}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Subsection}{11}{subsection.9.1}%
